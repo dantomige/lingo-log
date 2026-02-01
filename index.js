@@ -1,22 +1,36 @@
+LARGEST_INTEGER = 2147483647;
+
 const btn = document.getElementById("get-history-button");
 
 
 btn.addEventListener("click", async () => {
-    const history = await fetchHistory(100);
-    // console.log("After fetching history", typeof history, history);
-    const searchHistory = filterforSearchHistory(history);
-    // console.log("After filtering for search history", typeof searchHistory, searchHistory);
+
+    // Fetch browsing history using Chrome API
+    const history = await fetchHistory(LARGEST_INTEGER);
+    console.log("Fetched history length:", history.length);
+    
+    // Filter for Google Search history
+    const searchHistory = filterForSearchHistory(history);
+
+    // Collect search inputs from Google Search URLs
     const googleSearchInputs = getGoogleSearchInputs(searchHistory);
-    // console.log("After extracting Google search inputs", typeof googleSearchInputs, googleSearchInputs);
-    renderGoogleSearchInputs(googleSearchInputs);
+
+    // Filter for vocabulary-related queries
+    const VOCAB_KEYWORDS = ["define", "definition", "meaning", "synonym", "antonym", "etymology", "usage"];
+    const vocabSearchInputs = filterForVocabularyQueries(googleSearchInputs, VOCAB_KEYWORDS);
+
+    // Render the vocabulary search inputs to the UI
+    render(vocabSearchInputs);
 });
 
 
 async function fetchHistory(numResults) {
     return new Promise((resolve) => {
-        chrome.history.search({ text: '', maxResults: numResults }, function(chromeHistory) {
-            resolve(chromeHistory);
-        });
+        chrome.history.search({ 
+            text: '', 
+            maxResults: numResults, 
+            startTime: 0 
+        }, resolve);
     });
 };
 
@@ -30,7 +44,7 @@ function isActualSearch(historyItem) {
     return isGoogle && isSearchPage && hasQuery;
 }
 
-function filterforSearchHistory(history) {
+function filterForSearchHistory(history) {
     const searchHistory = history.filter(historyItem => isActualSearch(historyItem));
     return searchHistory;
 };
@@ -39,20 +53,37 @@ function getGoogleSearchInputs(searchHistory) {
     const googleSearchInputs = searchHistory.map(historyItem => {
         const url = new URL(historyItem.url);
         const searchInput = url.searchParams.get("q");
-        console.log("Google search query:", searchInput);
         return searchInput;
     });
     return googleSearchInputs;
 };
 
-function renderGoogleSearchInputs(googleSearchInputs) {
-    const wordList = document.getElementById("word-list");
-
-    googleSearchInputs.forEach(function(userInput) {
-        const p = document.createElement("p");
-        p.textContent = userInput;
-        wordList.appendChild(p);
+function filterForVocabularyQueries(googleSearchInputs, keywords) {
+    
+    const vocabSearchInputs = googleSearchInputs.filter(input => {
+        for (let keyword of keywords) {
+            if (input.toLowerCase().includes(keyword.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
     });
 
-    wordList.style.color = "blue";
+    return vocabSearchInputs;
+}
+
+
+function render(userInputs) {
+    const wordList = document.getElementById("word-list");
+    const inputCount = userInputs.length;
+    const header = document.createElement("h2");
+    header.textContent = `You have looked up ${inputCount} vocabulary-related terms:`;
+    wordList.appendChild(header);
+
+    for ([index, userInput] of userInputs.entries()) {
+        const p = document.createElement("p");
+        p.textContent = `${index + 1}. ${userInput}`;
+        p.style.color = "blue";
+        wordList.appendChild(p);
+    }
 };
