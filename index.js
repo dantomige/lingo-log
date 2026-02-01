@@ -19,8 +19,18 @@ btn.addEventListener("click", async () => {
     const VOCAB_KEYWORDS = ["define", "definition", "meaning", "synonym", "antonym", "etymology", "usage"];
     const vocabSearchInputs = filterForVocabularyQueries(googleSearchInputs, VOCAB_KEYWORDS);
 
+    // Get vocabulary words from vocabulary-related queries
+    const vocabWords = getVocabularyWords(vocabSearchInputs);
+    // console.log("Vocabulary words extracted:", vocabWords);
+    // console.log("Number of vocabulary words extracted:", vocabWords.length);
+
+    // Fetch definitions for vocabulary words
+    const wordDefinitions = await getWordInfo(vocabWords);
+    console.log("Word definitions fetched:", wordDefinitions);
+    console.log("Number of unique vocabulary words with definitions:", Object.keys(wordDefinitions).length);
+
     // Render the vocabulary search inputs to the UI
-    render(vocabSearchInputs);
+    renderDefinitions(wordDefinitions);
 });
 
 
@@ -72,6 +82,83 @@ function filterForVocabularyQueries(googleSearchInputs, keywords) {
     return vocabSearchInputs;
 }
 
+function getVocabularyWords(vocabSearchInputs) {
+    const vocabWords = vocabSearchInputs.map(query => {
+    return query
+        .replace(/\b(definition|meaning|synonym|etymology|define|what is|in english|french|spanish|yoruba)\b/gi, '')
+        .replace(/[0-9]+\./g, '')
+        .trim();
+    });
+    return vocabWords;
+}
+
+async function getWordInfo(words) {
+    const wordDefinitions = {};
+    for (let word of words) {
+        try {
+            const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+
+            const data = await response.json();
+
+            console.log(`Fetched definition for ${word}:`, data);
+
+            const meanings = data[0].meanings
+
+            console.log(`typeof meanings: ${typeof meanings}, length: ${meanings.length}, data:`, meanings);
+
+            const mostFrequentMeaning = meanings[0]
+
+            const partofSpeech = mostFrequentMeaning.partOfSpeech
+
+            const definitions = mostFrequentMeaning.definitions
+            const definition = definitions[0].definition
+
+            const example = definitions[0].example
+
+            if (!(word in wordDefinitions)) {
+                wordDefinitions[word] = {"definition": definition, "partOfSpeech": partofSpeech, "count": 0, "example": example};
+                console.log(`Added new word definition for ${word}`, wordDefinitions[word], Object.keys(wordDefinitions).length);
+            } 
+
+            wordDefinitions[word].count += 1;
+        } catch (error) {
+            console.error(`Error fetching definition for ${word}:`, error);
+            continue;
+        }
+    }
+
+    return wordDefinitions;
+}
+
+function renderDefinitions(wordDefinitions) {
+    const wordList = document.getElementById("word-list");
+    const numWords = Object.keys(wordDefinitions).length;
+    const header = document.createElement("h2");
+    header.textContent = `You have looked up ${numWords} vocabulary-related terms:`;
+    wordList.appendChild(header);
+
+    let index = 1;
+    for (const [word, definitionData] of Object.entries(wordDefinitions)) {
+        const container = document.createElement("div");
+        container.className = "word-item";
+        container.style.marginBottom = "15px";
+
+        container.innerHTML = `
+            <div style="color: blue; font-weight: bold;">
+                ${index}. ${word.toUpperCase()} 
+                <span style="color: gray; font-style: italic;">(${definitionData.partOfSpeech || 'N/A'})</span>
+            </div>
+            <div style="margin-left: 15px;">
+                <strong>Def:</strong> ${definitionData.definition} <br>
+                <strong>Ex:</strong> "<em>${definitionData.example || 'No example available'}</em>" <br>
+                <small>Looked up: ${definitionData.count} times</small>
+            </div>
+        `;
+
+        wordList.appendChild(container);
+        index++;
+    }
+};
 
 function render(userInputs) {
     const wordList = document.getElementById("word-list");
