@@ -25,7 +25,7 @@ btn.addEventListener("click", async () => {
     // console.log("Number of vocabulary words extracted:", vocabWords.length);
 
     // Fetch definitions for vocabulary words
-    const wordDefinitions = await getWordInfo(vocabWords);
+    const wordDefinitions = await getInfoForWords(vocabWords);
     console.log("Word definitions fetched:", wordDefinitions);
     console.log("Number of unique vocabulary words with definitions:", Object.keys(wordDefinitions).length);
 
@@ -92,17 +92,33 @@ function getVocabularyWords(vocabSearchInputs) {
     return vocabWords;
 }
 
-async function getWordInfo(words) {
+async function fetchWordData(word) {
+    try {
+        const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+        const wordData = await response.json();
+        console.log(`Fetched data for ${word}:`, wordData);
+        return wordData;
+    } catch (error) {
+        console.error(`Error fetching data for ${word}:`, error);
+        return null;
+    }
+}
+
+async function getInfoForWords(words) {
     const wordDefinitions = {};
-    for (let word of words) {
+
+    const allWordDataPromises = words.map(word => fetchWordData(word));
+    const allWordDataResults = await Promise.allSettled(allWordDataPromises);
+    const successfulWordData = allWordDataResults
+        .filter(r => r.status === "fulfilled")
+        .map(r => r.value);
+
+    console.log("Successful word data fetched:", successfulWordData, "Total successful:", successfulWordData.length);
+
+    for (let wordData of successfulWordData) {
         try {
-            const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-
-            const data = await response.json();
-
-            console.log(`Fetched definition for ${word}:`, data);
-
-            const meanings = data[0].meanings
+            const word = wordData[0].word;
+            const meanings = wordData[0].meanings;
 
             console.log(`typeof meanings: ${typeof meanings}, length: ${meanings.length}, data:`, meanings);
 
@@ -122,7 +138,7 @@ async function getWordInfo(words) {
 
             wordDefinitions[word].count += 1;
         } catch (error) {
-            console.error(`Error fetching definition for ${word}:`, error);
+            console.error(`Error processing word data:`, error);
             continue;
         }
     }
@@ -151,7 +167,7 @@ function renderDefinitions(wordDefinitions) {
             <div style="margin-left: 15px;">
                 <strong>Def:</strong> ${definitionData.definition} <br>
                 <strong>Ex:</strong> "<em>${definitionData.example || 'No example available'}</em>" <br>
-                <small>Looked up: ${definitionData.count} times</small>
+                <small>Looked up: ${definitionData.count} ${definitionData.count === 1 ? 'time' : 'times'}</small>
             </div>
         `;
 
