@@ -31,16 +31,16 @@ class VocabStorage {
      * @returns {Promise<void>}
      */
     static async saveVocabEntries(vocabEntries) {
-        const allVocabEntries = chrome.storage.local.get(null);
+        const allVocabEntries = await chrome.storage.local.get(null);
 
-        await allVocabEntries;
         // console.log(typeof allVocabEntries, allVocabEntries);
         // console.log("Keys:", Object.keys(allVocabEntries), "Total keys:", Object.keys(allVocabEntries).length);
         const seenWords = new Set(Object.keys(allVocabEntries));
-        console.log("Seen words in storage:", seenWords, "Total seen words:", seenWords.size);
+        // console.log("Seen words in storage:", seenWords, "Total seen words:", seenWords.size);
         
         for (let vocabEntry of vocabEntries) {
             if (seenWords.has(vocabEntry.word)) {
+                // console.log(`Word ${vocabEntry.word} already exists in storage. Incrementing count.`);
                 const existingEntry = allVocabEntries[vocabEntry.word];
                 vocabEntry.incrementCount(existingEntry.count);
             }
