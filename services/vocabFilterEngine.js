@@ -6,6 +6,8 @@
 
 export class VocabFilterEngine {
 
+    static #KEYWORDS = ["define", "definition", "meaning", "synonym", "antonym", "etymology", "usage"];
+
     static #isActualSearch(historyItem) {
         const url = new URL(historyItem.url);
 
@@ -30,10 +32,10 @@ export class VocabFilterEngine {
         return googleSearchInputs;
     };
 
-    static #filterForVocabularyQueries(googleSearchInputs, keywords) {
+    static #filterForVocabularyQueries(googleSearchInputs) {
         
         const vocabSearchInputs = googleSearchInputs.filter(input => {
-            for (let keyword of keywords) {
+            for (let keyword of this.#KEYWORDS) {
                 if (input.toLowerCase().includes(keyword.toLowerCase())) {
                     return true;
                 }
