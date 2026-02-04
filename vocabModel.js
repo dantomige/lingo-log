@@ -1,4 +1,4 @@
-class VocabEntry {
+export class VocabEntry {
   constructor(word, definition, partOfSpeech, example, count = 1) {
     this.word = word;
     this.definition = definition;
