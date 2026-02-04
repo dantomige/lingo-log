@@ -1,3 +1,9 @@
+/**
+ * HistoryProvider
+ * 
+ * Service to access browsing history using Chrome API
+ */
+
 class HistoryProvider {
     static #MAX_HISTORY_RESULTS = 2147483647; // Largest integer for Chrome history API
 

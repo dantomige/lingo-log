@@ -1,3 +1,9 @@
+/**
+ * VocabFilterEngine
+ * 
+ * Service to filter browsing history for vocabulary-related searches
+ */
+
 class VocabFilterEngine {
 
     static #isActualSearch(historyItem) {
@@ -68,7 +74,7 @@ class VocabFilterEngine {
 
         // Extract vocabulary words
         const vocabWords = this.#getVocabularyWords(vocabSearchInputs);
-        
+
         return vocabWords;
     }
 }
