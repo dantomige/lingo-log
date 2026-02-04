@@ -4,7 +4,7 @@
  * Service to fetch word details from an external dictionary API
  */
 
-class DictionaryService {
+export class DictionaryService {
 
     static #API_URL = 'https://api.dictionaryapi.dev/api/v2/entries/en/';
 

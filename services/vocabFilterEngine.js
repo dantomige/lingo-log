@@ -4,7 +4,7 @@
  * Service to filter browsing history for vocabulary-related searches
  */
 
-class VocabFilterEngine {
+export class VocabFilterEngine {
 
     static #isActualSearch(historyItem) {
         const url = new URL(historyItem.url);
