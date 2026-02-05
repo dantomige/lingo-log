@@ -11,4 +11,4 @@ export class VocabEntry {
   incrementCount(increment = 1) {
     this.count += increment;
   }
-}
+};
