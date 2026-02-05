@@ -10,5 +10,9 @@
   "permissions": [
     "history",
     "storage"
-  ]
+  ],
+  "background": {
+    "service_worker": "serviceWorker.js",
+    "type": "module"
+  }
 }
