@@ -68,7 +68,7 @@ export class VocabFilterEngine {
         const googleSearchInputs = this.#getGoogleSearchInputs(searchHistory);
 
         // Filter for vocabulary-related queries
-        const vocabSearchInputs = this.#filterForVocabularyQueries(googleSearchInputs, keywords);
+        const vocabSearchInputs = this.#filterForVocabularyQueries(googleSearchInputs);
 
         // Extract vocabulary words
         const vocabWords = this.#getVocabularyWords(vocabSearchInputs);
