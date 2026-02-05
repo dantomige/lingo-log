@@ -1,8 +1,8 @@
 # 📓 Lingo Log
 
-**Turn your search history into a living vocabulary.**
+**Use chrome to look up words while reading books?**
 
-Lingo Log is a Chrome Extension that transforms the "lost" words from your daily browsing into a structured learning tool. It captures your search intent, enriches words with context, and bridges the gap between a quick Google search and long-term memory.
+Lingo Log is a Chrome Extension that transforms the "lost" words from your daily browsing into a structured learning tool. It packages those words into one place for your review and study.
 
 ---
 
@@ -13,3 +13,4 @@ Lingo Log is a Chrome Extension that transforms the "lost" words from your daily
 - [ ] Export to Anki (or other flash card applications) Button
 - [ ] Improve Dictionary Service and Vocab Filter Engine for better retrieval and higher accuracy
 - [ ] Better style index.js file.
+- [ ] Add to Chrome extension store
