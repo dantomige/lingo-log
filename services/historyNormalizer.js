@@ -5,6 +5,6 @@
  * @param {chrome.history.HistoryItem[]} chromeHistory - chrome search history
  * @returns {URL[]} - chrome history urls
  */
-function normalizeChromeHistory(chromeHistory) {
+export function normalizeChromeHistory(chromeHistory) {
     return chromeHistory.map((historyItem) => new URL(historyItem.url))
 }
