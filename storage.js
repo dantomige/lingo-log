@@ -1,3 +1,5 @@
+import { VocabEntry } from "./vocabModel.js";
+
 /**
  * Adaptor for saving and loading vocabulary entries to/from localStorage.
  */
