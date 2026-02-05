@@ -21,10 +21,9 @@ export class VocabFilterEngine {
         return searchHistory;
     };
 
-    static #getGoogleSearchInputs(searchHistory) {
-        const googleSearchInputs = searchHistory.map(historyItem => {
-            const url = new URL(historyItem.url);
-            const searchInput = url.searchParams.get("q");
+    static #getGoogleSearchInputs(searchUrlHistory) {
+        const googleSearchInputs = searchUrlHistory.map(urlItem => {
+            const searchInput = urlItem.searchParams.get("q");
             return searchInput;
         });
         return googleSearchInputs;
