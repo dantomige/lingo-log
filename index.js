@@ -1,5 +1,5 @@
 import { MESSAGE_TYPES } from "./background/messageTypes.js";
-import { VocabEntry } from "./vocabModel.js";
+import { VocabEntry } from "./models/vocabModel.js";
 
 const loadButton = document.getElementById("get-history-button");
 const importButton = document.getElementById("import-safari-button");

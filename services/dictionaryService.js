@@ -1,4 +1,4 @@
-import { VocabEntry } from "../vocabModel.js";
+import { VocabEntry } from "../models/vocabModel.js";
 
 /**
  * DictionaryService
