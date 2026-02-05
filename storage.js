@@ -124,6 +124,7 @@ export class VocabStorage {
     }
 
     static async saveLastSyncTime(timestamp) {
+        console.log("Setting last sync time :", {timestamp});
         await chrome.storage.sync.set({ lastSyncTime: timestamp });
     }
 
@@ -131,4 +132,4 @@ export class VocabStorage {
         const result = await chrome.storage.sync.get("lastSyncTime");
         return result["lastSyncTime"] || 0;
     }
-}
+};
