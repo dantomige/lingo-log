@@ -1,3 +1,5 @@
+import { VocabEntry } from "../vocabModel.js";
+
 /**
  * DictionaryService
  * 
