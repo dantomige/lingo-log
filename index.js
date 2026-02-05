@@ -46,7 +46,7 @@ function renderDefinitions(allVocabEntries) {
 
         container.innerHTML = `
             <div style="color: blue; font-weight: bold;">
-                ${index}. ${vocabEntry.word.toUpperCase()} 
+                ${index + 1}. ${vocabEntry.word.toUpperCase()} 
                 <span style="color: gray; font-style: italic;">(${vocabEntry.partOfSpeech || 'N/A'})</span>
             </div>
             <div style="margin-left: 15px;">
