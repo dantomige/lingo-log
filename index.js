@@ -104,6 +104,11 @@ function renderSafariImportSummary(count) {
  */
 function renderDefinitions(allVocabEntries) {
     const wordList = document.getElementById("word-list");
+
+    // clear html
+    wordList.innerHTML = "";
+
+    
     const numWords = allVocabEntries.length;
     const header = document.createElement("h2");
     header.textContent = `You have looked up ${numWords} vocabulary-related terms:`;
