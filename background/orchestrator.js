@@ -1,4 +1,4 @@
-import { VocabStorage } from '../storage.js';
+import { VocabStorage } from '../data/storage.js';
 import { HistoryProvider } from '../services/historyProvider.js';
 import { normalizeChromeHistory } from '../services/historyNormalizer.js'
 import { VocabFilterEngine } from '../services/vocabFilterEngine.js';

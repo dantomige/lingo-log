@@ -1,5 +1,5 @@
 import { handleLoadVocab } from './orchestrator.js';
-import { VocabStorage } from '../storage.js';
+import { VocabStorage } from '../data/storage.js';
 
 
 export function setupLifecycleHandler() {

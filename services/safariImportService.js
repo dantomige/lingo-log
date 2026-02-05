@@ -1,6 +1,6 @@
 import { VocabFilterEngine } from './vocabFilterEngine.js';
 import { DictionaryService } from './dictionaryService.js';
-import { VocabStorage } from '../storage.js';
+import { VocabStorage } from '../data/storage.js';
 
 export class SafariImportService {
 
