@@ -1,9 +1,11 @@
 import { MESSAGE_TYPES } from "./background/messageTypes.js";
 import { VocabEntry } from "./vocabModel.js";
 
-const btn = document.getElementById("get-history-button");
+const loadButton = document.getElementById("get-history-button");
+const importButton = document.getElementById("import-safari-button");
+const fileInput = document.getElementById("safari-file-input");
 
-btn.addEventListener("click", async () => {
+loadButton.addEventListener("click", async () => {
 
     // Collect vocab history (send message to service worker)
     const response = await chrome.runtime.sendMessage(
@@ -23,6 +25,76 @@ btn.addEventListener("click", async () => {
     // Render the vocabulary search inputs to the UI
     renderDefinitions(allVocabEntries);
 });
+
+importButton.addEventListener("click", async () => {
+    fileInput.click();
+});
+
+fileInput.addEventListener("change", async () => {
+    const file = event.target.files[0]; // Get the first selected file
+    
+    if (!file) return; // User cancelled the selection
+
+    const reader = new FileReader();
+
+    reader.onload = async (e) => {
+
+        // 1. Shut off button and prepare data
+        const originalText = importButton.textContent;
+
+        importButton.disabled = true;
+        importButton.textContent = "Loading...";
+        
+        const fileContent = e.target.result; // This is the actual JSON text
+        const jsonData = JSON.parse(fileContent);
+
+        // 2. Send the ACTUAL DATA to your background script
+        const response = await chrome.runtime.sendMessage({
+            type: MESSAGE_TYPES.IMPORT_SAFARI,
+            payload: { 
+                data: jsonData, // Pass the object, not the filename
+                filename: file.name 
+            },
+            timestamp: Date.now()
+        });
+
+        if (!response.success) {
+            throw new Error(`Failed to load vocab data. Error: ${response.error}`);
+        }
+
+        // Update response
+        const numVocabSearches = response.data.length;
+
+        importButton.disabled = false;
+        importButton.textContent = originalText;
+
+        // Render the vocabulary search inputs to the UI
+        renderSafariImportSummary(numVocabSearches);
+    };
+
+    reader.readAsText(file); // This triggers the 'onload' above
+});
+
+/**
+ * Renamed from renderSafariImportResults
+ * Displays a summary message in the UI
+ */
+function renderSafariImportSummary(count) {
+    const safariSummaryContainer = document.getElementById("safari-summary-container");
+    if (count !== null) {
+        safariSummaryContainer.innerHTML = `
+            <div class="import-banner success">
+                <strong>Success!</strong> Imported ${count} new searches from Safari history.
+            </div>
+        `;
+    } else {
+        safariSummaryContainer.innerHTML = `
+            <div class="import-banner success">
+                <strong>Import Complete!</strong> Your Safari history has been synced.
+            </div>
+        `;
+    }
+}
 
 /**
  * 
