@@ -61,10 +61,9 @@ export class VocabFilterEngine {
      * Extract vocabulary words from browsing history
      * 
      * @param {chrome.history.HistoryItem[]} history - Array of history items
-     * @param {string[]} keywords - Array of keywords to filter vocabulary queries
      * @returns {string[]} - Array of vocabulary words extracted from history
      */
-    static extractVocab(history, keywords)  {
+    static extractVocab(history)  {
         // Extract search history
         const searchHistory = this.#filterForSearchHistory(history);
 
