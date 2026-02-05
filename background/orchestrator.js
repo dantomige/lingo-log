@@ -1,5 +1,6 @@
 import { VocabStorage } from '../storage.js';
 import { HistoryProvider } from '../services/historyProvider.js';
+import { normalizeChromeHistory } from '../services/historyNormalizer.js'
 import { VocabFilterEngine } from '../services/vocabFilterEngine.js';
 import { DictionaryService } from '../services/dictionaryService.js';
 
@@ -16,7 +17,9 @@ export async function handleLoadVocab(newSyncTime) {
     // Fetch recent vocab history since last sync time and create models
     const recentHistory =  await HistoryProvider.fetchHistory(lastSyncTime, newSyncTime);
     console.log("Recent history: ", recentHistory);
-    const vocabSearchTerms = VocabFilterEngine.extractVocab(recentHistory);
+    const urlHistory = normalizeChromeHistory(recentHistory);
+    console.log("urlHistory: ", urlHistory);
+    const vocabSearchTerms = VocabFilterEngine.extractVocab(urlHistory);
     console.log("Vocab search terms: ", vocabSearchTerms);
     const vocabModels = await DictionaryService.fetchDetailsBatch(vocabSearchTerms);
     console.log("Vocab models: ", vocabModels);

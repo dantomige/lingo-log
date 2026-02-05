@@ -8,18 +8,16 @@ export class VocabFilterEngine {
 
     static #KEYWORDS = ["define", "definition", "meaning", "synonym", "antonym", "etymology", "usage"];
 
-    static #isActualSearch(historyItem) {
-        const url = new URL(historyItem.url);
-
-        const isGoogle = url.hostname.includes("google.com");
-        const isSearchPage = url.pathname.includes("/search");
-        const hasQuery = url.searchParams.has('q');
+    static #isActualSearch(urlItem) {
+        const isGoogle = urlItem.hostname.includes("google.com");
+        const isSearchPage = urlItem.pathname.includes("/search");
+        const hasQuery = urlItem.searchParams.has('q');
 
         return isGoogle && isSearchPage && hasQuery;
     }
 
-    static #filterForSearchHistory(history) {
-        const searchHistory = history.filter(historyItem => this.#isActualSearch(historyItem));
+    static #filterForSearchHistory(urlHistory) {
+        const searchHistory = urlHistory.filter(urlItem => this.#isActualSearch(urlItem));
         return searchHistory;
     };
 
@@ -60,12 +58,12 @@ export class VocabFilterEngine {
      * 
      * Extract vocabulary words from browsing history
      * 
-     * @param {chrome.history.HistoryItem[]} history - Array of history items
+     * @param {URL[]} urlHistory - Array of url items
      * @returns {string[]} - Array of vocabulary words extracted from history
      */
-    static extractVocab(history)  {
+    static extractVocab(urlHistory)  {
         // Extract search history
-        const searchHistory = this.#filterForSearchHistory(history);
+        const searchHistory = this.#filterForSearchHistory(urlHistory);
 
         // Get Google search inputs
         const googleSearchInputs = this.#getGoogleSearchInputs(searchHistory);
