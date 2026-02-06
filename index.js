@@ -45,14 +45,14 @@ fileInput.addEventListener("change", async () => {
         importButton.disabled = true;
         importButton.textContent = "Loading...";
         
-        const fileContent = e.target.result; // This is the actual JSON text
+        const fileContent = e.target.result;
         const jsonData = JSON.parse(fileContent);
 
         // 2. Send the ACTUAL DATA to your background script
         const response = await chrome.runtime.sendMessage({
             type: MESSAGE_TYPES.IMPORT_SAFARI,
             payload: { 
-                data: jsonData, // Pass the object, not the filename
+                data: jsonData, 
                 filename: file.name 
             },
             timestamp: Date.now()
@@ -62,7 +62,7 @@ fileInput.addEventListener("change", async () => {
             throw new Error(`Failed to load vocab data. Error: ${response.error}`);
         }
 
-        // Update response
+        // 3. Update response
         const numVocabSearches = response.data.length;
 
         importButton.disabled = false;
@@ -81,16 +81,18 @@ fileInput.addEventListener("change", async () => {
  */
 function renderSafariImportSummary(count) {
     const safariSummaryContainer = document.getElementById("safari-summary-container");
-    if (count !== null) {
+    safariSummaryContainer.innerHTML = "";
+
+    if (count > 0) {
         safariSummaryContainer.innerHTML = `
             <div class="import-banner success">
-                <strong>Success!</strong> Imported ${count} new searches from Safari history.
+                <strong>Success!</strong> Imported ${count} ${count === 1 ? 'search' : 'searches'} from Safari history.
             </div>
         `;
     } else {
         safariSummaryContainer.innerHTML = `
             <div class="import-banner success">
-                <strong>Import Complete!</strong> Your Safari history has been synced.
+                <strong>Import Complete!</strong> No new imports found.
             </div>
         `;
     }
